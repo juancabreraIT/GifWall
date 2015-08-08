@@ -2,8 +2,17 @@
 <resources>
 
     <string name="app_name">GifWallet</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="invite">Tell your friends</string>
     <string name="add">Add</string>
+    <string name="invite">Invite your friends</string>
+    <string name="share">Share</string>
+
+    <string name="no_cheese">There is only cheese in your gallery!</string>
+    <string name="invite_msg">Hey! Give it a try to this app\nGifWallet let you save and share gif images!\nhttp://lacanaca.com</string>
+    <string name="share_url">Share URL</string>
+    <string name="wallet">wallet</string>
+    <string name="addImage">Add new image</string>
+    <string name="fromURL">From URL</string>
+    <string name="fromGallery">From gallery</string>
+    <string name="delete">Delete this image?</string>
 
 </resources>
