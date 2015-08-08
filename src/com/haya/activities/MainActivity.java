@@ -37,7 +37,7 @@ import android.widget.Toast;
 
 import com.haya.adapter.GridAdapter;
 import com.haya.filemanager.FilesManager;
-import com.haya.gifwallet.R;
+import com.haya.gifwall.R;
 import com.haya.utils.Constants;
 import com.haya.utils.Utils;
 

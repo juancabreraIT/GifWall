@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">GifWallet</string>
+    <string name="app_name">GifWall</string>
     <string name="add">Add</string>
     <string name="invite">Invite your friends</string>
     <string name="share">Share</string>

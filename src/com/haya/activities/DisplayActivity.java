@@ -19,7 +19,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.haya.gifwallet.R;
+import com.haya.gifwall.R;
 import com.haya.utils.Constants;
 import com.haya.utils.Utils;
 

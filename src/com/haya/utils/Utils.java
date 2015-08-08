@@ -10,7 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.haya.gifwallet.R;
+import com.haya.gifwall.R;
 
 public final class Utils {
 	
@@ -20,7 +20,6 @@ public final class Utils {
 		inviteFriend.setAction(Intent.ACTION_SEND);
 		inviteFriend.putExtra(Intent.EXTRA_TEXT, text);
 		inviteFriend.setType("text/plain");
-//		context.startActivity(Intent.createChooser(inviteFriend, title));
 		
 		return inviteFriend;
 	}
