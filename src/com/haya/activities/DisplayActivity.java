@@ -13,7 +13,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -62,42 +61,8 @@ public class DisplayActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-	private void share() {
-		
-		CharSequence shareOptions[] = new CharSequence[] {
-				"Image",
-				"URL"
-//				getResources().getText(R.string.fromURL), 
-//				getResources().getText(R.string.fromGallery)
-				};
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(getResources().getText(R.string.share));
-		builder.setItems(shareOptions, new DialogInterface.OnClickListener() {
-		    
-			@Override
-		    public void onClick(DialogInterface dialog, int which) {
-		        // the user clicked on addMethods[which]				
-				if ( which == 0 ) {
-					Uri contentUri = getUri();
-					Intent sendIntent = getIntent(contentUri);
-					startActivity(Intent.createChooser(sendIntent, "Share gif"));
-					
-				} else if ( which == 1 ) {					
-					
-					String url = Utils.getURL(getBaseContext(), file.getName());
-					
-					Intent inviteFriend = Utils.shareText(getBaseContext(), url); 				
-					startActivity(Intent.createChooser(inviteFriend, getResources().getText(R.string.share_url).toString()));
-					
-				}
-		    }
-		});
-		builder.show();
-	}
-	
 	private void setImage(File file) {
-		
+
 		if ( file.getName().contains("." + Constants.GIF) ) {
 			Glide.with(this)
 		    .load(file)
@@ -112,10 +77,39 @@ public class DisplayActivity extends Activity {
 		    .fitCenter()
 		    .into(imageView);
 		}
-
 	}
 	
-	private Uri getUri() {		
+	private void share() {
+		
+		CharSequence shareOptions[] = new CharSequence[] {
+				getResources().getText(R.string.image), 
+				getResources().getText(R.string.url)
+				};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(getResources().getText(R.string.share));
+		builder.setItems(shareOptions, new DialogInterface.OnClickListener() {
+		    
+			@Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        // the user clicked on addMethods[which]				
+				if ( which == 0 ) {
+					Uri contentUri = getUri();
+					Intent sendIntent = getIntent(contentUri);
+					startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_gif)));
+					
+				} else if ( which == 1 ) {					
+					
+					String url = Utils.getURL(getBaseContext(), file.getName());				
+					Intent inviteFriend = Utils.shareText(getBaseContext(), url); 				
+					startActivity(Intent.createChooser(inviteFriend, getResources().getText(R.string.share_url).toString()));					
+				}
+		    }
+		});
+		builder.show();
+	}
+	
+	private Uri getUri() {
 		Uri contentUri = FileProvider.getUriForFile(this, Constants.PACKAGE_FILE_PROVIDER, file);		
 		return contentUri;
 	}
@@ -130,12 +124,10 @@ public class DisplayActivity extends Activity {
 		List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(sendIntent, PackageManager.MATCH_DEFAULT_ONLY);
 		for (ResolveInfo resolveInfo : resInfoList) {
 		    String packageName = resolveInfo.activityInfo.packageName;
-		    Log.d("GifWallet", packageName);
 		    this.grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		}
 		
 		return sendIntent;
 	}
-
 	
 }

@@ -16,6 +16,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -24,7 +25,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +33,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.haya.adapter.GridAdapter;
 import com.haya.filemanager.FilesManager;
@@ -45,11 +44,11 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 
 	final static private int RESULT_LOAD_IMAGE = 1;
 	final static private FilesManager FILES = new FilesManager();
-	private GridView galeria;		
 	private ArrayList<File> imagesArray = new ArrayList<File>();
-	private GridAdapter adaptador;
-	
+	private GridView galeria;			
+	private GridAdapter adaptador;	
 	private String url;
+	private int orientation;
 	
 	ProgressDialog mProgressDialog;
 	
@@ -58,7 +57,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-
+		this.orientation = getRequestedOrientation();
 		
 		// instantiate it within the onCreate method
 		mProgressDialog = new ProgressDialog(this);
@@ -66,10 +65,9 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		mProgressDialog.setIndeterminate(true);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mProgressDialog.setCancelable(true);
-		
+
 		try {
 			loadGallery();
-//			mock();
 			init();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -77,39 +75,46 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	}
 
 	private void loadGallery() {
-				
-		File imagesFolder = new File(this.getFilesDir(), (String) getResources().getText(R.string.wallet));
-		if ( imagesFolder.exists() && imagesFolder.isDirectory() ) {			
-			
+
+		if ( Utils.getFirstTime(this).equals(Constants.YES) ) {
+			Utils.setNotFirstTime(this);
+			mock();
+		}
+
+		File imagesFolder = new File(this.getFilesDir(), (String) getResources().getText(R.string.wall));
+		if ( imagesFolder.exists() && imagesFolder.isDirectory() ) {
+
 			imagesArray.clear();
-			
+
 			for (File file : imagesFolder.listFiles()) {
 				imagesArray.add(file);
 			}
 		} else {
 			imagesFolder.mkdir();
 		}
+
+    	if (imagesArray.isEmpty()) {
+    		setContentView(R.layout.empty);
+    	}		
 	}
-	
-	private void mock() throws IOException {
-//
-//		File imagesFolder = crearDirectorioWallet();		
-//		String fileName = generateFileName(imagesFolder);
-//		File image = new File(fileName);
-//		
-//		InputStream input = getAssets().open("gif_99.gif");		
-//
-//		if ( FILES.copyFile(input, image) < 0) {
-//			Log.e("GifWallet", "copyFile FAILED");
-//		}
-//
-//		imagesArray.add(image);
+
+	private void mock() {
+
+		try {
+			File imagesFolder = Utils.crearDirectorioWall(this);		
+			String fileName = Utils.generateFileName(imagesFolder);
+			File image = new File(fileName);
+			InputStream input = getAssets().open(Constants.EXAMPLE_GIF);
+			FILES.copyFile(input, image);
+			imagesArray.add(image);	
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void init() {
 
 		this.adaptador = new GridAdapter(this, imagesArray);
-		
 		this.galeria = (GridView) findViewById(R.id.gallery);
 		this.galeria.setAdapter(adaptador);
 		this.galeria.setOnItemClickListener(this);
@@ -125,15 +130,13 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		
+
 		if (id == R.id.add) {
 			addImage();
-		} else if (id == R.id.invite) {			
-			
-			Intent inviteFriend = Utils.shareText(this, getResources().getText(R.string.invite_msg).toString()); 
+		} else if (id == R.id.invite) {
+			Intent inviteFriend = Utils.shareText(this, getResources().getText(R.string.invite_msg).toString());
 			startActivity(Intent.createChooser(inviteFriend, getResources().getText(R.string.invite).toString()));
 		}
-		
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -152,10 +155,9 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	         String picturePath = cursor.getString(columnIndex);
 	         cursor.close();
 	                      
-	         // String picturePath contains the path of selected Image
-	         
+	         // String picturePath contains the path of selected Image	         
 	         String imagePath = saveFromGalleryToApp(picturePath);
-	         Utils.setURL(getBaseContext(), imagePath.substring(imagePath.lastIndexOf("/") + 1), "gallery");
+	         Utils.setURL(getBaseContext(), imagePath.substring(imagePath.lastIndexOf("/") + 1), Constants.GALLERY);
 	         
 	         loadGallery();
 		     adaptador.changeData(imagesArray);
@@ -193,9 +195,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		        // the user clicked on addMethods[which]				
 				if ( which == 0 ) {
 					loadFromURL();
-				} else if ( which == 1 ) {
-					Toast.makeText(getBaseContext(), getResources().getText(R.string.fromGallery), Toast.LENGTH_LONG).show();
-					
+				} else if ( which == 1 ) {					
 					Intent i = new Intent(
 							Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 							 
@@ -209,7 +209,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	private void loadFromURL() {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("***Set the URL****");
+		builder.setTitle(getResources().getText(R.string.type_url));
 
 		final EditText input = new EditText(this);
 		// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
@@ -217,13 +217,12 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		builder.setView(input);
 
 		// Set up the buttons
-		builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() { 
+		builder.setPositiveButton(getResources().getText(R.string.accept), new DialogInterface.OnClickListener() { 
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
-		    	Toast.makeText(getBaseContext(), "Downloading your image...", Toast.LENGTH_LONG).show();
 		    	url = input.getText().toString();
 
-		    	final DownloadTask downloadTask = new DownloadTask(getBaseContext());
+		    	final DownloadTask downloadTask = new DownloadTask(getBaseContext(), MainActivity.this);
 		    	downloadTask.execute(url);
 		    	
 		    	mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -235,7 +234,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		    			    	
 		    }
 		});
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton(getResources().getText(R.string.cancel), new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
 		        dialog.cancel();
@@ -276,10 +275,12 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	class DownloadTask extends AsyncTask<String, Integer, Integer> {
 
 		private Context context;
+		private MainActivity activity;
 		private PowerManager.WakeLock mWakeLock;
 		
-		public DownloadTask(Context context) {
+		public DownloadTask(Context context, MainActivity activity) {
 			this.context = context;
+			this.activity = activity;
 		}
     
 	    protected Integer doInBackground(String... urls) {
@@ -290,15 +291,13 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	    	try {
 	        	int totalLeido = 0;
 
-	    		File imagesFolder = Utils.crearDirectorioWallet(context);		
+	    		File imagesFolder = Utils.crearDirectorioWall(context);		
 	    		String imagePath = Utils.generateFileName(imagesFolder);
 	        	
     			URL url = new URL(urls[0]);
     			HttpURLConnection httpcon;
     			httpcon = (HttpURLConnection) url.openConnection();
-    			httpcon.addRequestProperty("User-Agent", "Mozilla/4.76");
-    			
-    			Log.d("GifWallet", "Content Type: " + httpcon.getContentType() );
+    			httpcon.addRequestProperty("User-Agent", "Mozilla/4.76");    			
     			
     			int fileLength = httpcon.getContentLength();
     			
@@ -310,8 +309,9 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 				while (leido > 0) {
 					
 					if ( isCancelled() ) {
-						is.close();
+						is.close();	
 						fos.close();
+						FILES.deleteFile(imagePath);
 						return -1;
 					}
 					
@@ -351,6 +351,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	    protected void onPreExecute() {
 	        super.onPreExecute();
 
+	        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 	        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 	        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
 	        mWakeLock.acquire();
@@ -373,13 +374,14 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	    	
 	    	loadGallery();
 	    	adaptador.changeData(imagesArray);
+	    	setRequestedOrientation(orientation);
 	    }
 	}
 	
 	private String saveFromGalleryToApp(String picturePath) {
 		
 		try {
-	         File imagesFolder = Utils.crearDirectorioWallet(this);		
+	         File imagesFolder = Utils.crearDirectorioWall(this);		
 	    	 String imagePath = Utils.generateFileName(imagesFolder);
 	    	 File file = new File(imagePath);
 	         InputStream in = new FileInputStream(picturePath);	    	 
@@ -395,5 +397,8 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		}
 		return "error";
 	}
+	
+	
+//	private void ads() {}
 	
 }

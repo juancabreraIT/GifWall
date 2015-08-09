@@ -19,7 +19,7 @@
         
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.haya.gifwallet.fileprovider"
+            android:authorities="com.haya.activities.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             

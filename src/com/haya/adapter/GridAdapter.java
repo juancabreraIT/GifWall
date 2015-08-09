@@ -34,7 +34,7 @@ import com.squareup.picasso.Picasso;
     
     public void changeData(ArrayList<File> data) {
     	gifList = data;
-        notifyDataSetChanged();
+        notifyDataSetChanged();               
     }
     
     public int getCount() {
@@ -64,30 +64,16 @@ import com.squareup.picasso.Picasso;
         }        
 
     	// ****** GLIDE *******
-//    	if ( gifList.isEmpty() ) {
-//    		Glide.with(context)
-//    	    .load(context.getResources().getIdentifier("drawable/ic_launcher", null, context.getPackageName()))
-//    	    .placeholder(R.drawable.ic_cheese)	    
-//    	    .fitCenter()
-//    	    .into(imageView);	
-//    	} else {
-//    		Glide.with(context)
-//    	    .load(gifList.get(position))
-//    	    .placeholder(R.drawable.ic_cheese)	    
-//    	    .fitCenter()
-//    	    .into(imageView);
-//    	}
+//    	Glide.with(context)
+//    	   .load(gifList.get(position))
+//    	   .placeholder(R.drawable.ic_cheese)	    
+//    	   .fitCenter()
+//    	   .into(imageView);
 
-    	// ******* PICASSO *******
-    	if ( gifList.isEmpty() ) {
-    		Picasso.with(context)
-            .load(context.getResources().getIdentifier("drawable/ic_launcher", null, context.getPackageName()))
-            .into(imageView);
-    	} else {
-            Picasso.with(context)
-            .load(gifList.get(position))
-            .into(imageView);
-    	}
+    	// ******* PICASSO *******    	
+        Picasso.with(context)
+        .load(gifList.get(position))
+        .into(imageView);
 
         return imageView;
     }

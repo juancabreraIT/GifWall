@@ -8,11 +8,17 @@
 
     <string name="no_cheese">There is only cheese in your gallery!</string>
     <string name="invite_msg">Hey! Give it a try to this app\nGifWallet let you save and share gif images!\nhttp://lacanaca.com</string>
+    <string name="share_gif">Share gif</string>
     <string name="share_url">Share URL</string>
-    <string name="wallet">wallet</string>
+    <string name="wall">wall</string>
     <string name="addImage">Add new image</string>
     <string name="fromURL">From URL</string>
     <string name="fromGallery">From gallery</string>
     <string name="delete">Delete this image?</string>
+    <string name="image">Image</string>
+    <string name="url">URL</string>
+    <string name="type_url">Type the url</string>
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
 
 </resources>
