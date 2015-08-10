@@ -15,7 +15,7 @@
     <string name="fromURL">Desde URL</string>
     <string name="fromGallery">Desde galeria</string>
     <string name="delete">¿Quieres eliminar la imagen?</string>
-    <string name="image">Image</string>
+    <string name="image">Imagen</string>
     <string name="url">URL</string>
     <string name="type_url">Escribe la url</string>
     <string name="accept">Aceptar</string>
