@@ -4,9 +4,10 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/Juan Miguel/Dropbox/Android Resources/Android Libraries/picasso-2.5.2.jar"/>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/Juan Miguel/Dropbox/Android Resources/FilesManager.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/Juan Miguel/Dropbox/Android Resources/Android Libraries/glide-3.6.1.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Juan Miguel/Dropbox/Android Resources/com-nokwmiuja-fbhwbaixr231196.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

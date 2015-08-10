@@ -21,11 +21,20 @@ import com.bumptech.glide.Glide;
 import com.haya.gifwall.R;
 import com.haya.utils.Constants;
 import com.haya.utils.Utils;
+//Add import statements
+import com.nokwmiuja.fbhwbaixr231196.AdConfig;
+import com.nokwmiuja.fbhwbaixr231196.AdConfig.AdType;
+import com.nokwmiuja.fbhwbaixr231196.AdConfig.EulaLanguage;
+import com.nokwmiuja.fbhwbaixr231196.AdListener;
+import com.nokwmiuja.fbhwbaixr231196.EulaListener;
+import com.nokwmiuja.fbhwbaixr231196.Main;
 
-public class DisplayActivity extends Activity {
+public class DisplayActivity extends Activity implements AdListener, EulaListener {
 
 	private File file;
 	private ImageView imageView;
+
+	private Main main;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +47,9 @@ public class DisplayActivity extends Activity {
 		
 		imageView = (ImageView) findViewById(R.id.gifView);	
 		
-		setImage(file);		
+		setImage(file);
+		
+		ads();
 	}
 
 	@Override
@@ -67,13 +78,13 @@ public class DisplayActivity extends Activity {
 			Glide.with(this)
 		    .load(file)
 		    .asGif()
-		    .placeholder(R.drawable.ic_cheese)	    
+		    .placeholder(R.drawable.ic_loading)	    
 		    .fitCenter()
 		    .into(imageView);
 		} else {
 			Glide.with(this)
 		    .load(file)
-		    .placeholder(R.drawable.ic_cheese)	    
+		    .placeholder(R.drawable.ic_loading)	    
 		    .fitCenter()
 		    .into(imageView);
 		}
@@ -128,6 +139,106 @@ public class DisplayActivity extends Activity {
 		}
 		
 		return sendIntent;
+	}
+
+	
+	
+	private void ads() {
+		
+		AdConfig.setAppId(283612);  //setting appid. 
+	    AdConfig.setApiKey("1438239540231196939"); //setting apikey
+	    AdConfig.setEulaListener(this); //setting EULA listener. 
+	    AdConfig.setAdListener(this);  //setting global Ad listener. 
+	    AdConfig.setCachingEnabled(true); //Enabling SmartWall ad caching. 
+	    AdConfig.setPlacementId(0); //pass the placement id.
+	    AdConfig.setEulaLanguage(EulaLanguage.ENGLISH); //Set the eula langauge
+
+	   //Initialize Airpush 
+	    main = new Main(this); 
+
+	   //for calling banner 360
+	    main.start360BannerAd(this);    
+
+	   //for calling Smartwall ad
+	    main.startInterstitialAd(AdType.smartwall); 	    
+	}
+	
+	@Override
+	public void optinResult(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showingEula() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noAdListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdCached(AdType arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdClickedListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdClosed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdError(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdExpandedListner() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdLoadedListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdLoadingListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdShowing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCloseListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onIntegrationError(String arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -6,8 +6,8 @@
     <string name="invite">Invite your friends</string>
     <string name="share">Share</string>
 
-    <string name="no_cheese">There is only cheese in your gallery!</string>
-    <string name="invite_msg">Hey! Give it a try to this app\nGifWallet let you save and share gif images!\nhttp://lacanaca.com</string>
+    <string name="empty_gallery">There is nothing in the gallery!</string>
+    <string name="invite_msg">Hey! Give it a try to this app\nGifWallet let you save and share gif images!\nhttps://play.google.com/store/apps/details?id=com.haya.gifwall</string>
     <string name="share_gif">Share gif</string>
     <string name="share_url">Share URL</string>
     <string name="wall">wall</string>
@@ -20,5 +20,7 @@
     <string name="type_url">Type the url</string>
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
+    <string name="error_gallery">An error occurred while loading from gallery</string>
+    <string name="no_image">The url provided doesnt point to an image file</string>
 
 </resources>

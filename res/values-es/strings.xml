@@ -6,8 +6,8 @@
     <string name="invite">Invitar a amigos</string>
     <string name="share">Compartir</string>
 
-    <string name="no_cheese">¡No hay nada en la galería!</string>
-    <string name="invite_msg">Hey! Dale una oportunidad a esta app.\nGifWall te permite guardar y compartir gifs!\nhttp://lacanaca.com</string>
+    <string name="empty_gallery">¡No hay nada en la galería!</string>
+    <string name="invite_msg">Hey! Dale una oportunidad a esta app.\nGifWall te permite guardar y compartir gifs!\nhttps://play.google.com/store/apps/details?id=com.haya.gifwall</string>
     <string name="share_gif">Compartir gif</string>
     <string name="share_url">Compartir URL</string>
     <string name="wall">wall</string>
@@ -20,5 +20,7 @@
     <string name="type_url">Escribe la url</string>
     <string name="accept">Acceptar</string>
     <string name="cancel">Cancel</string>
+    <string name="error_gallery">Se produjo un error al cargar desde la galería</string>
+    <string name="no_image">La url proporcionada no apunta a un archivo de imagen.</string>
 
 </resources>

@@ -33,14 +33,22 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.haya.adapter.GridAdapter;
 import com.haya.filemanager.FilesManager;
 import com.haya.gifwall.R;
 import com.haya.utils.Constants;
 import com.haya.utils.Utils;
+//Add import statements
+import com.nokwmiuja.fbhwbaixr231196.AdConfig;
+import com.nokwmiuja.fbhwbaixr231196.AdConfig.AdType;
+import com.nokwmiuja.fbhwbaixr231196.AdConfig.EulaLanguage;
+import com.nokwmiuja.fbhwbaixr231196.AdListener;
+import com.nokwmiuja.fbhwbaixr231196.EulaListener;
+import com.nokwmiuja.fbhwbaixr231196.Main;
 
-public class MainActivity extends Activity implements OnItemClickListener, OnItemLongClickListener {
+public class MainActivity extends Activity implements OnItemClickListener, OnItemLongClickListener, AdListener, EulaListener {
 
 	final static private int RESULT_LOAD_IMAGE = 1;
 	final static private FilesManager FILES = new FilesManager();
@@ -52,6 +60,8 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	
 	ProgressDialog mProgressDialog;
 	
+	private Main main;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,7 +71,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		
 		// instantiate it within the onCreate method
 		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setMessage("Downloading image. . .");
+		mProgressDialog.setMessage(Constants.DOWNLOADING);
 		mProgressDialog.setIndeterminate(true);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mProgressDialog.setCancelable(true);
@@ -72,37 +82,35 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		
+		ads();
 	}
 
 	private void loadGallery() {
 
 		if ( Utils.getFirstTime(this).equals(Constants.YES) ) {
 			Utils.setNotFirstTime(this);
-			mock();
+			addExampleImage();
 		}
 
-		File imagesFolder = new File(this.getFilesDir(), (String) getResources().getText(R.string.wall));
-		if ( imagesFolder.exists() && imagesFolder.isDirectory() ) {
+		File imagesFolder = Utils.getDirectorioWall(this);		
+		imagesArray.clear();
 
-			imagesArray.clear();
-
-			for (File file : imagesFolder.listFiles()) {
-				imagesArray.add(file);
-			}
-		} else {
-			imagesFolder.mkdir();
-		}
+		for (File file : imagesFolder.listFiles()) {
+			imagesArray.add(file);
+		}		
 
     	if (imagesArray.isEmpty()) {
     		setContentView(R.layout.empty);
     	}		
 	}
 
-	private void mock() {
+	private void addExampleImage() {
 
 		try {
-			File imagesFolder = Utils.crearDirectorioWall(this);		
-			String fileName = Utils.generateFileName(imagesFolder);
+			String fileExtension = Utils.getFileExtension(Constants.EXAMPLE_GIF);
+			File imagesFolder = Utils.getDirectorioWall(this);		
+			String fileName = Utils.generateFileName(imagesFolder, fileExtension);
 			File image = new File(fileName);
 			InputStream input = getAssets().open(Constants.EXAMPLE_GIF);
 			FILES.copyFile(input, image);
@@ -140,29 +148,6 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {			
-		super.onActivityResult(requestCode, resultCode, data);
-	      
-	     if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {	    	 
-	         Uri selectedImage = data.getData();
-	         String[] filePathColumn = { MediaStore.Images.Media.DATA };
-	 
-	         Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-	         cursor.moveToFirst();
-	 
-	         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-	         String picturePath = cursor.getString(columnIndex);
-	         cursor.close();
-	                      
-	         // String picturePath contains the path of selected Image	         
-	         String imagePath = saveFromGalleryToApp(picturePath);
-	         Utils.setURL(getBaseContext(), imagePath.substring(imagePath.lastIndexOf("/") + 1), Constants.GALLERY);
-	         
-	         loadGallery();
-		     adaptador.changeData(imagesArray);
-	     }
-	}
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -182,7 +167,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	private void addImage() {
 		
 		CharSequence addMethods[] = new CharSequence[] {
-				getResources().getText(R.string.fromURL), 
+				getResources().getText(R.string.fromURL),
 				getResources().getText(R.string.fromGallery)
 				};
 
@@ -196,10 +181,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 				if ( which == 0 ) {
 					loadFromURL();
 				} else if ( which == 1 ) {					
-					Intent i = new Intent(
-							Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-							 
-					startActivityForResult(i, RESULT_LOAD_IMAGE);
+					loadFromGallery();
 				}
 		    }
 		});
@@ -212,8 +194,9 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		builder.setTitle(getResources().getText(R.string.type_url));
 
 		final EditText input = new EditText(this);
-		// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+		// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text		
 		input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+		input.setText("http://");
 		builder.setView(input);
 
 		// Set up the buttons
@@ -222,7 +205,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		    public void onClick(DialogInterface dialog, int which) {
 		    	url = input.getText().toString();
 
-		    	final DownloadTask downloadTask = new DownloadTask(getBaseContext(), MainActivity.this);
+		    	final DownloadTask downloadTask = new DownloadTask(getBaseContext(), MainActivity.this);		    			    			    
 		    	downloadTask.execute(url);
 		    	
 		    	mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -243,6 +226,43 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 
 		builder.show();
 		
+	}	
+	
+	private void loadFromGallery() {
+		Intent i = new Intent(
+				Intent.ACTION_PICK, 
+				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				 
+		startActivityForResult(i, RESULT_LOAD_IMAGE);
+	}
+	
+	// Pick image from gallery
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {			
+		super.onActivityResult(requestCode, resultCode, data);
+	      
+	     if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {	    	 
+	         Uri selectedImage = data.getData();
+	         String[] filePathColumn = { MediaStore.Images.Media.DATA };
+	 
+	         Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+	         cursor.moveToFirst();
+	 
+	         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+	         String picturePath = cursor.getString(columnIndex);
+	         cursor.close();
+	                      
+	         // String picturePath contains the path of selected Image	         
+	         String imagePath = saveFromGalleryToApp(picturePath);
+	         
+	         if ( !imagePath.equals(Constants.ERROR) ) {
+	        	 Utils.setURL(getBaseContext(), imagePath.substring(imagePath.lastIndexOf("/") + 1), Constants.GALLERY);
+		         loadGallery();
+			     adaptador.changeData(imagesArray);
+	         } else {
+	        	 Toast.makeText(this, getResources().getText(R.string.error_gallery), Toast.LENGTH_LONG).show();
+	         }
+	     }
 	}	
 	
 	private void confirmDelete(int position) {
@@ -291,8 +311,12 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	    	try {
 	        	int totalLeido = 0;
 
-	    		File imagesFolder = Utils.crearDirectorioWall(context);		
-	    		String imagePath = Utils.generateFileName(imagesFolder);
+	        	String fileExtension = Utils.getFileExtension(urls[0]);
+	        	if ( !Utils.isImage(fileExtension) ) {
+	        		return -1;
+	        	}
+	    		File imagesFolder = Utils.getDirectorioWall(context);
+	    		String imagePath = Utils.generateFileName(imagesFolder, fileExtension);
 	        	
     			URL url = new URL(urls[0]);
     			HttpURLConnection httpcon;
@@ -372,8 +396,13 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	    	mWakeLock.release();
 	        mProgressDialog.dismiss();
 	    	
-	    	loadGallery();
-	    	adaptador.changeData(imagesArray);
+	        if ( result > 0 ) {
+		    	loadGallery();
+		    	adaptador.changeData(imagesArray);	        	
+	        } else {
+	        	Toast.makeText(context, getResources().getText(R.string.no_image), Toast.LENGTH_LONG).show();
+	        }
+
 	    	setRequestedOrientation(orientation);
 	    }
 	}
@@ -381,24 +410,125 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	private String saveFromGalleryToApp(String picturePath) {
 		
 		try {
-	         File imagesFolder = Utils.crearDirectorioWall(this);		
-	    	 String imagePath = Utils.generateFileName(imagesFolder);
-	    	 File file = new File(imagePath);
-	         InputStream in = new FileInputStream(picturePath);	    	 
+			String fileExtension = Utils.getFileExtension(picturePath);
+	        File imagesFolder = Utils.getDirectorioWall(this);		
+	    	String imagePath = Utils.generateFileName(imagesFolder, fileExtension);
+	    	File file = new File(imagePath);
+	        InputStream in = new FileInputStream(picturePath);	    	 
 	         
-	         FilesManager filesManager = new FilesManager();
-	         filesManager.copyFile(in, file);
+	        FilesManager filesManager = new FilesManager();
+	        filesManager.copyFile(in, file);
 
-	         return imagePath;
+	        return imagePath;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return "error";
+		return Constants.ERROR;
 	}
 	
 	
-//	private void ads() {}
+	/**********************************/
+	/***********  AIR PUSH ************/
+	/**********************************/
+	
+	private void ads() {
+		
+		AdConfig.setAppId(283612);  //setting appid. 
+	    AdConfig.setApiKey("1438239540231196939"); //setting apikey
+	    AdConfig.setEulaListener(this); //setting EULA listener. 
+	    AdConfig.setAdListener(this);  //setting global Ad listener. 
+	    AdConfig.setCachingEnabled(true); //Enabling SmartWall ad caching. 
+	    AdConfig.setPlacementId(0); //pass the placement id.
+	    AdConfig.setEulaLanguage(EulaLanguage.ENGLISH); //Set the eula langauge
+
+	   //Initialize Airpush 
+	    main = new Main(this); 
+
+	   //for calling banner 360
+	    main.start360BannerAd(this);    
+
+	   //for calling Smartwall ad
+	    main.startInterstitialAd(AdType.smartwall); 	   
+	}
+	
+	@Override
+	public void optinResult(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showingEula() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noAdListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdCached(AdType arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdClickedListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdClosed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdError(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdExpandedListner() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdLoadedListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdLoadingListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAdShowing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCloseListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onIntegrationError(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
