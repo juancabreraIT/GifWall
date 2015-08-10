@@ -86,7 +86,7 @@ import com.squareup.picasso.Picasso;
     	display.getSize(size);
     	int width = size.x;
 
-    	return (int) ((width / 3) * 0.99);
+    	return (int) ((width / 3) * 0.98);
     }
 }
 
