@@ -18,7 +18,7 @@
     <string name="image">Image</string>
     <string name="url">URL</string>
     <string name="type_url">Escribe la url</string>
-    <string name="accept">Acceptar</string>
+    <string name="accept">Aceptar</string>
     <string name="cancel">Cancel</string>
     <string name="error_gallery">Se produjo un error al cargar desde la galería</string>
     <string name="no_image">La url proporcionada no apunta a un archivo de imagen.</string>
