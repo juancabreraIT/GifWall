@@ -77,6 +77,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		mProgressDialog.setCancelable(true);
 
 		try {
+			checkIntent();
 			loadGallery();
 			init();
 		} catch(Exception e) {
@@ -86,6 +87,20 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		ads();
 	}
 
+	private void checkIntent() {
+		
+		final Intent intent = getIntent();
+		if ( intent == null ) {
+			return;
+		}
+	    final String action = intent.getAction();
+
+	    if ( Intent.ACTION_VIEW.equals(action) ) {
+	    	
+	    	Toast.makeText(this, intent.getDataString(), Toast.LENGTH_LONG).show();
+	    }
+	}
+	
 	private void loadGallery() {
 
 		if ( Utils.getFirstTime(this).equals(Constants.YES) ) {
