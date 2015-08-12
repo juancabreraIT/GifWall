@@ -349,24 +349,20 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
     			
 				is = httpcon.getInputStream();
 				fos = new FileOutputStream(imagePath);		
-				
+
 				byte[] array = new byte[1000]; // buffer temporal
 				int leido = is.read(array);
 				while (leido > 0) {
-					
+
 					if ( isCancelled() ) {
 						is.close();	
 						fos.close();
 						FILES.deleteFile(imagePath);
 						return -1;
 					}
-					
+
 					totalLeido += leido;
-					
-//	                publishProgress((int) (totalLeido * 100 / fileLength));
-//                    publishProgress( leido, fileLength );
                     publishProgress( totalLeido / 1000, fileLength);
-						    					
 					fos.write(array, 0, leido);
 					leido = is.read(array);
 				}
