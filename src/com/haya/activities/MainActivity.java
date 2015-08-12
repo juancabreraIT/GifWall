@@ -95,9 +95,9 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		}
 	    final String action = intent.getAction();
 
-	    if ( Intent.ACTION_VIEW.equals(action) ) {
-	    	
+	    if ( Intent.ACTION_VIEW.equals(action) ) {	    	
 	    	Toast.makeText(this, intent.getDataString(), Toast.LENGTH_LONG).show();
+	    	loadFromURL(intent.getDataString());
 	    }
 	}
 	
@@ -194,7 +194,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		    public void onClick(DialogInterface dialog, int which) {
 		        // the user clicked on addMethods[which]				
 				if ( which == 0 ) {
-					loadFromURL();
+					loadFromURL("");
 				} else if ( which == 1 ) {					
 					loadFromGallery();
 				}
@@ -203,7 +203,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		builder.show();
 	}
 
-	private void loadFromURL() {
+	private void loadFromURL(String intentURL) {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(getResources().getText(R.string.type_url));
@@ -211,7 +211,11 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		final EditText input = new EditText(this);
 		// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text		
 		input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-		input.setText("http://");
+		if ( intentURL.isEmpty() ) {
+			input.setText("http://");	
+		} else {
+			input.setText(intentURL);
+		}
 		builder.setView(input);
 
 		// Set up the buttons

@@ -54,8 +54,13 @@
             	<category android:name="android.intent.category.DEFAULT" />
             	<category android:name="android.intent.category.BROWSABLE" />
 
-            	<data android:scheme="http"/>
-            	<data android:scheme="https"/>
+            <data android:scheme="http"
+                  android:host="*" 
+                  android:pathPattern=".*\\.gif" />
+            
+			<data android:scheme="https"
+                  android:host="*" 
+                  android:pathPattern=".*\\.gif" />
 
             </intent-filter>
 
