@@ -96,7 +96,6 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	    final String action = intent.getAction();
 
 	    if ( Intent.ACTION_VIEW.equals(action) ) {	    	
-	    	Toast.makeText(this, intent.getDataString(), Toast.LENGTH_LONG).show();
 	    	loadFromURL(intent.getDataString());
 	    }
 	}
@@ -344,6 +343,10 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
     			
     			int fileLength = httpcon.getContentLength();
     			
+    			if (fileLength <= 0) {
+    				return -1;
+    			}
+    			
 				is = httpcon.getInputStream();
 				fos = new FileOutputStream(imagePath);		
 				
@@ -359,9 +362,10 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 					}
 					
 					totalLeido += leido;
-					if ( fileLength > 0 ) {
-	                   publishProgress((int) (totalLeido * 100 / fileLength));
-					}
+					
+//	                publishProgress((int) (totalLeido * 100 / fileLength));
+//                    publishProgress( leido, fileLength );
+                    publishProgress( totalLeido / 1000, fileLength);
 						    					
 					fos.write(array, 0, leido);
 					leido = is.read(array);
@@ -398,6 +402,8 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 	        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
 	        mWakeLock.acquire();
+	        mProgressDialog.setProgressNumberFormat("%1d kb / %2d kb");
+	        mProgressDialog.setMax(0);
 	        mProgressDialog.show();
 	    }	   
 	    
@@ -405,8 +411,8 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	    	super.onProgressUpdate(progress);
 	    	
 	        mProgressDialog.setIndeterminate(false);
-	        mProgressDialog.setMax(100);
-	        mProgressDialog.setProgress(progress[0]);	        
+	        mProgressDialog.setMax(progress[1] / 1000 );
+	        mProgressDialog.setProgress(progress[0]);		        
 	    }
 
 	    @Override
