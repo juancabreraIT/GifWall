@@ -19,10 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.haya.adapter.GifWebView;
 import com.haya.gifwall.R;
 import com.haya.utils.Constants;
 import com.haya.utils.Utils;
@@ -33,6 +30,7 @@ import com.nokwmiuja.fbhwbaixr231196.AdConfig.EulaLanguage;
 import com.nokwmiuja.fbhwbaixr231196.AdListener;
 import com.nokwmiuja.fbhwbaixr231196.EulaListener;
 import com.nokwmiuja.fbhwbaixr231196.Main;
+import com.squareup.picasso.Picasso;
 
 public class DisplayActivity extends Activity implements AdListener, EulaListener {
 
@@ -51,7 +49,7 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		Intent intent = getIntent();
 		file = (File) intent.getSerializableExtra(Constants.GIF);			
 		
-//		imageView = (ImageView) findViewById(R.id.gifView);	
+		imageView = (ImageView) findViewById(R.id.gifView);	
 		
 		webView = (WebView) findViewById(R.id.webView);
 		
@@ -83,49 +81,38 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 	private void setImage(File file) {
 
 		if ( file.getName().contains("." + Constants.GIF) ) {
-			
+
+			webView.setVisibility(View.VISIBLE);
+			imageView.setVisibility(View.GONE);
+
 			Display display = getWindowManager().getDefaultDisplay();
 			int width = (int) (display.getWidth() * 0.9);
 			int heigth = (int) (display.getHeight() * 0.75);
 			int scale;
-			
-			scale = (width < heigth ? width : heigth);			
-			
+
+			scale = (width < heigth ? width : heigth);
+
 			String data = "<html>"
 						+	 "<body style=\"background:#000000\">"
 						+ 		"<img width=\"" + scale + "\" src=\""+ "file:///" + file.getAbsolutePath() + "\" style=\"position: absolute; margin: auto; top: 0; left: 0; bottom: 0; right: 0;\"	/>"
 						+	 "</body>"
 						+ "</html>";
-			
+
 			webView.loadDataWithBaseURL("file:///" + file.getAbsolutePath(), data, "text/html","UTF-8" , null);
-//			webView.loadData(data, "text/html", null);
-			
-						
-//			webView = new GifWebView(this, "file:///" + file.getAbsolutePath());			
-//			imageView.setVisibility(View.GONE);
 
-//			setContentView(webView);
-
-//			Glide.with(this)
-//		    .load(file)
-//		    .asGif()
-//		    .placeholder(R.drawable.ic_loading)	    
-//		    .fitCenter()
-//		    .into(imageView);
 		} else {
 			webView.setVisibility(View.GONE);
 			imageView.setVisibility(View.VISIBLE);
-			
-			Glide.with(this)
+
+			Picasso.with(this)
 		    .load(file)
-		    .placeholder(R.drawable.ic_loading)	    
-		    .fitCenter()
+		    .placeholder(R.drawable.ic_loading)
 		    .into(imageView);
 		}
 	}
-	
+
 	private void share() {
-		
+
 		CharSequence shareOptions[] = new CharSequence[] {
 				getResources().getText(R.string.image), 
 				getResources().getText(R.string.url)
@@ -153,14 +140,14 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		});
 		builder.show();
 	}
-	
+
 	private Uri getUri() {
 		Uri contentUri = FileProvider.getUriForFile(this, Constants.PACKAGE_FILE_PROVIDER, file);		
 		return contentUri;
 	}
 
 	private Intent getIntent(Uri contentUri) {
-		
+
 		Intent sendIntent = new Intent();		
 		sendIntent.setAction(Intent.ACTION_SEND);
 		sendIntent.setType("image/gif");
