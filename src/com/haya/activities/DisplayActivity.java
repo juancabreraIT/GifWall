@@ -93,7 +93,7 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 			scale = (width < heigth ? width : heigth);
 
 			String data = "<html>"
-						+	 "<body style=\"background:#000000\">"
+						+	 "<body style=\"background:#0F0F0F\">"
 						+ 		"<img width=\"" + scale + "\" src=\""+ "file:///" + file.getAbsolutePath() + "\" style=\"position: absolute; margin: auto; top: 0; left: 0; bottom: 0; right: 0;\"	/>"
 						+	 "</body>"
 						+ "</html>";
