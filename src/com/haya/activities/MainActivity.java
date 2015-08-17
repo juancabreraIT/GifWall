@@ -56,37 +56,75 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	private GridView galeria;			
 	private GridAdapter adaptador;	
 	private String url;
-	private int orientation;
-	
-	ProgressDialog mProgressDialog;
-	
+	private int orientation;	
+	private ProgressDialog mProgressDialog;	
 	private Main main;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-		this.orientation = getRequestedOrientation();
+
+		try {
+			initUI();
+			initProgressDialog();
+			checkIntent();
+			loadGallery();
+			init();
+			ads();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}		
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+
+		if (id == R.id.add) {
+			addImage();
+		} else if (id == R.id.invite) {
+			Intent inviteFriend = Utils.shareText(this, getResources().getText(R.string.invite_msg).toString());
+			startActivity(Intent.createChooser(inviteFriend, getResources().getText(R.string.invite).toString()));
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			
+		Intent intent = new Intent(getBaseContext(), DisplayActivity.class);
+	    intent.putExtra(Constants.GIF, imagesArray.get(position));
+	    startActivity(intent);
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		
+		confirmDelete(position);
+		return true;		
+	}
+	
+	private void initUI() {
+		getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+		this.orientation = getRequestedOrientation();	
+	}
+	
+	private void initProgressDialog() {
 		// instantiate it within the onCreate method
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setMessage(Constants.DOWNLOADING);
 		mProgressDialog.setIndeterminate(true);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mProgressDialog.setCancelable(true);
-
-		try {
-			checkIntent();
-			loadGallery();
-			init();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		ads();
 	}
-
+	
 	private void checkIntent() {
 		
 		final Intent intent = getIntent();
@@ -143,41 +181,6 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 		this.galeria.setOnItemLongClickListener(this);
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-
-		if (id == R.id.add) {
-			addImage();
-		} else if (id == R.id.invite) {
-			Intent inviteFriend = Utils.shareText(this, getResources().getText(R.string.invite_msg).toString());
-			startActivity(Intent.createChooser(inviteFriend, getResources().getText(R.string.invite).toString()));
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			
-		Intent intent = new Intent(getBaseContext(), DisplayActivity.class);
-	    intent.putExtra(Constants.GIF, imagesArray.get(position));
-	    startActivity(intent);
-	}
-
-	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		
-		confirmDelete(position);
-		return true;		
-	}
-
 	private void addImage() {
 		
 		CharSequence addMethods[] = new CharSequence[] {
@@ -283,6 +286,27 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	     }
 	}	
 	
+	private String saveFromGalleryToApp(String picturePath) {
+		
+		try {
+			String fileExtension = Utils.getFileExtension(picturePath);
+	        File imagesFolder = Utils.getDirectorioWall(this);		
+	    	String imagePath = Utils.generateFileName(imagesFolder, fileExtension);
+	    	File file = new File(imagePath);
+	        InputStream in = new FileInputStream(picturePath);	    	 
+	         
+	        FilesManager filesManager = new FilesManager();
+	        filesManager.copyFile(in, file);
+
+	        return imagePath;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Constants.ERROR;
+	}
+	
 	private void confirmDelete(int position) {
 
 		final int selectedItem = position;
@@ -310,6 +334,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	     .show();
 	}
 
+	// ASYNC TASK
 	class DownloadTask extends AsyncTask<String, Integer, Integer> {
 
 		private Context context;
@@ -426,34 +451,12 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 
 	    	setRequestedOrientation(orientation);
 	    }
-	}
 	
-	private String saveFromGalleryToApp(String picturePath) {
-		
-		try {
-			String fileExtension = Utils.getFileExtension(picturePath);
-	        File imagesFolder = Utils.getDirectorioWall(this);		
-	    	String imagePath = Utils.generateFileName(imagesFolder, fileExtension);
-	    	File file = new File(imagePath);
-	        InputStream in = new FileInputStream(picturePath);	    	 
-	         
-	        FilesManager filesManager = new FilesManager();
-	        filesManager.copyFile(in, file);
-
-	        return imagePath;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return Constants.ERROR;
-	}
-	
+	}	
 	
 	/**********************************/
 	/***********  AIR PUSH ************/
-	/**********************************/
-	
+	/**********************************/	
 	private void ads() {
 		
 		AdConfig.setAppId(283612);  //setting appid. 
