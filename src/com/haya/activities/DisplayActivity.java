@@ -13,16 +13,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
-import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.haya.gifwall.R;
 import com.haya.utils.Constants;
 import com.haya.utils.Utils;
@@ -33,62 +28,30 @@ import com.nokwmiuja.fbhwbaixr231196.AdConfig.EulaLanguage;
 import com.nokwmiuja.fbhwbaixr231196.AdListener;
 import com.nokwmiuja.fbhwbaixr231196.EulaListener;
 import com.nokwmiuja.fbhwbaixr231196.Main;
-import com.squareup.picasso.Picasso;
 
 public class DisplayActivity extends Activity implements AdListener, EulaListener {
 
 	private File file;
 	private ImageView imageView;
-	private WebView webView;
-	private Main main;	
-	private boolean barVisible;
+
+	private Main main;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display);
-
-		initUI();
+		getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));			
 
 		Intent intent = getIntent();
 		file = (File) intent.getSerializableExtra(Constants.GIF);			
-
-		imageView = (ImageView) findViewById(R.id.gifView);
-		imageView.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if ( barVisible ) {
-					getActionBar().hide();
-				} else {
-					getActionBar().show();
-				}
-				barVisible = !barVisible;
-				return false;
-			}
-		});
 		
+		imageView = (ImageView) findViewById(R.id.gifView);	
 		
-		webView = (WebView) findViewById(R.id.webView);
-		webView.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View arg0, MotionEvent arg1) {
-
-				if ( barVisible ) {
-					getActionBar().hide();
-				} else {
-					getActionBar().show();
-				}
-				barVisible = !barVisible;				
-				return false;
-			}			
-		});
-				
-		setImage(file);		
+		setImage(file);
+		
 		ads();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.display, menu);
@@ -109,40 +72,20 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		return super.onOptionsItemSelected(item);
 	}
 	
-	private void initUI() {
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getActionBar().hide();
-		getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-		this.barVisible = false;
-	}
-	
 	private void setImage(File file) {
 
 		if ( file.getName().contains("." + Constants.GIF) ) {
-			
-			Display display = getWindowManager().getDefaultDisplay();
-			int width = (int) (display.getWidth() * 0.9);
-			int heigth = (int) (display.getHeight() * 0.75);
-			int scale;
-			
-			scale = (width < heigth ? width : heigth);			
-			
-			String data = "<html>"
-						+	 "<body style=\"background:#000000\">"
-						+ 		"<img width=\"" + scale + "\" src=\""+ "file:///" + file.getAbsolutePath() + "\" style=\"position: absolute; margin: auto; top: 0; left: 0; bottom: 0; right: 0;\"	/>"
-						+	 "</body>"
-						+ "</html>";
-			
-			webView.loadDataWithBaseURL("file:///" + file.getAbsolutePath(), data, "text/html","UTF-8" , null);
-
+			Glide.with(this)
+		    .load(file)
+		    .asGif()
+		    .placeholder(R.drawable.ic_loading)	    
+		    .fitCenter()
+		    .into(imageView);
 		} else {
-			webView.setVisibility(View.GONE);
-			imageView.setVisibility(View.VISIBLE);
-			
-			Picasso.with(this)
+			Glide.with(this)
 		    .load(file)
 		    .placeholder(R.drawable.ic_loading)	    
-		    .fit().centerCrop()
+		    .fitCenter()
 		    .into(imageView);
 		}
 	}
@@ -198,6 +141,7 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		return sendIntent;
 	}
 
+	
 	
 	private void ads() {
 		

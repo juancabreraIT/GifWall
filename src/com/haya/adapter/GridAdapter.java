@@ -63,6 +63,13 @@ import com.squareup.picasso.Picasso;
         	imageView = (ImageView) convertView;
         }        
 
+    	// ****** GLIDE *******
+//    	Glide.with(context)
+//    	   .load(gifList.get(position))
+//    	   .placeholder(R.drawable.ic_cheese)	    
+//    	   .fitCenter()
+//    	   .into(imageView);
+
     	// ******* PICASSO *******    	
         Picasso.with(context)
         .load(gifList.get(position))
