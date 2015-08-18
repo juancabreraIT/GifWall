@@ -10,13 +10,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.haya.activities.DisplayActivity" >
 
-	<ImageView
+  	<ImageView
 	    android:id="@+id/gifView"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:contentDescription="@string/image"
 	    android:layout_centerHorizontal="true"
 	    android:layout_centerVertical="true"
-	    android:src="@drawable/ic_launcher" />
+	    android:visibility="gone" />
+	
+	<WebView 
+	    android:id="@+id/webView"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_centerHorizontal="true"
+	    android:layout_centerVertical="true" />
 
 </RelativeLayout>
