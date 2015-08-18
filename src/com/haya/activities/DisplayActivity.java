@@ -16,7 +16,10 @@ import android.support.v4.content.FileProvider;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
 
@@ -37,27 +40,55 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 	private File file;
 	private ImageView imageView;
 	private WebView webView;
-
-	private Main main;
+	private Main main;	
+	private boolean barVisible;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display);
-		getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));			
+
+		initUI();
 
 		Intent intent = getIntent();
 		file = (File) intent.getSerializableExtra(Constants.GIF);			
+
+		imageView = (ImageView) findViewById(R.id.gifView);
+		imageView.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if ( barVisible ) {
+					getActionBar().hide();
+				} else {
+					getActionBar().show();
+				}
+				barVisible = !barVisible;
+				return false;
+			}
+		});
 		
-		imageView = (ImageView) findViewById(R.id.gifView);	
 		
 		webView = (WebView) findViewById(R.id.webView);
-		
-		setImage(file);
-		
+		webView.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View arg0, MotionEvent arg1) {
+
+				if ( barVisible ) {
+					getActionBar().hide();
+				} else {
+					getActionBar().show();
+				}
+				barVisible = !barVisible;				
+				return false;
+			}			
+		});
+				
+		setImage(file);		
 		ads();
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.display, menu);
@@ -78,41 +109,46 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		return super.onOptionsItemSelected(item);
 	}
 	
+	private void initUI() {
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getActionBar().hide();
+		getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+		this.barVisible = false;
+	}
+	
 	private void setImage(File file) {
 
 		if ( file.getName().contains("." + Constants.GIF) ) {
-
-			webView.setVisibility(View.VISIBLE);
-			imageView.setVisibility(View.GONE);
-
+			
 			Display display = getWindowManager().getDefaultDisplay();
 			int width = (int) (display.getWidth() * 0.9);
 			int heigth = (int) (display.getHeight() * 0.75);
 			int scale;
-
-			scale = (width < heigth ? width : heigth);
-
+			
+			scale = (width < heigth ? width : heigth);			
+			
 			String data = "<html>"
-						+	 "<body style=\"background:#0F0F0F\">"
+						+	 "<body style=\"background:#000000\">"
 						+ 		"<img width=\"" + scale + "\" src=\""+ "file:///" + file.getAbsolutePath() + "\" style=\"position: absolute; margin: auto; top: 0; left: 0; bottom: 0; right: 0;\"	/>"
 						+	 "</body>"
 						+ "</html>";
-
+			
 			webView.loadDataWithBaseURL("file:///" + file.getAbsolutePath(), data, "text/html","UTF-8" , null);
 
 		} else {
 			webView.setVisibility(View.GONE);
 			imageView.setVisibility(View.VISIBLE);
-
+			
 			Picasso.with(this)
 		    .load(file)
-		    .placeholder(R.drawable.ic_loading)
+		    .placeholder(R.drawable.ic_loading)	    
+		    .fit().centerCrop()
 		    .into(imageView);
 		}
 	}
-
+	
 	private void share() {
-
+		
 		CharSequence shareOptions[] = new CharSequence[] {
 				getResources().getText(R.string.image), 
 				getResources().getText(R.string.url)
@@ -140,14 +176,14 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		});
 		builder.show();
 	}
-
+	
 	private Uri getUri() {
 		Uri contentUri = FileProvider.getUriForFile(this, Constants.PACKAGE_FILE_PROVIDER, file);		
 		return contentUri;
 	}
 
 	private Intent getIntent(Uri contentUri) {
-
+		
 		Intent sendIntent = new Intent();		
 		sendIntent.setAction(Intent.ACTION_SEND);
 		sendIntent.setType("image/gif");
@@ -162,7 +198,6 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		return sendIntent;
 	}
 
-	
 	
 	private void ads() {
 		

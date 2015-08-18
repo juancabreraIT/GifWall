@@ -24,9 +24,7 @@ public final class Utils {
 	
 	public static String getFileExtension(String fileName) {
 		
-		int extIndex = fileName.lastIndexOf(".");
-		
-		
+		int extIndex = fileName.lastIndexOf(".");			
 		return extIndex < 0 ? "not valid" : fileName.substring(extIndex);
 	}
 	
@@ -91,4 +89,5 @@ public final class Utils {
 		String firstTime = prefs.getString(Constants.FIRST, Constants.YES);						
 		return firstTime;
 	}
+
 }
