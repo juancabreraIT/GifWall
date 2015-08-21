@@ -16,9 +16,7 @@ import android.support.v4.content.FileProvider;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -40,8 +38,7 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 	private File file;
 	private ImageView imageView;
 	private WebView webView;
-	private Main main;	
-	private boolean barVisible;
+	private Main main;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,36 +51,7 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		file = (File) intent.getSerializableExtra(Constants.GIF);			
 
 		imageView = (ImageView) findViewById(R.id.gifView);
-		imageView.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if ( barVisible ) {
-					getActionBar().hide();
-				} else {
-					getActionBar().show();
-				}
-				barVisible = !barVisible;
-				return false;
-			}
-		});
-		
-		
 		webView = (WebView) findViewById(R.id.webView);
-		webView.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View arg0, MotionEvent arg1) {
-
-				if ( barVisible ) {
-					getActionBar().hide();
-				} else {
-					getActionBar().show();
-				}
-				barVisible = !barVisible;				
-				return false;
-			}			
-		});
 				
 		setImage(file);		
 		ads();
@@ -111,9 +79,6 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 	
 	private void initUI() {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getActionBar().hide();
-		getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-		this.barVisible = false;
 	}
 	
 	private void setImage(File file) {
@@ -197,7 +162,6 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		
 		return sendIntent;
 	}
-
 	
 	private void ads() {
 		
@@ -220,81 +184,42 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 	}
 	
 	@Override
-	public void optinResult(boolean arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void optinResult(boolean arg0) {	}
 
 	@Override
-	public void showingEula() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void showingEula() {	}
 
 	@Override
-	public void noAdListener() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void noAdListener() {	}
 
 	@Override
-	public void onAdCached(AdType arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onAdCached(AdType arg0) {	}
 
 	@Override
-	public void onAdClickedListener() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onAdClickedListener() {	}
 
 	@Override
-	public void onAdClosed() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onAdClosed() {	}
 
 	@Override
-	public void onAdError(String arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onAdError(String arg0) { 	}
 
 	@Override
-	public void onAdExpandedListner() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onAdExpandedListner() {	}
 
 	@Override
-	public void onAdLoadedListener() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onAdLoadedListener() {	}
 
 	@Override
-	public void onAdLoadingListener() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onAdLoadingListener() {	}
 
 	@Override
-	public void onAdShowing() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onAdShowing() {	}
 
 	@Override
-	public void onCloseListener() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onCloseListener() {	}
 
 	@Override
-	public void onIntegrationError(String arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onIntegrationError(String arg0) {	}
 	
 }
