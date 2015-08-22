@@ -22,5 +22,8 @@
     <string name="cancel">Cancel</string>
     <string name="error_gallery">Se produjo un error al cargar desde la galería</string>
     <string name="no_image">La url proporcionada no apunta a un archivo de imagen.</string>
-
+	<string name="info">Info</string>
+    <string name="gallery_url">Esta imagen no se descargó de internet. Prueba a compartir el archivo directamente.</string>
+    <string name="ok">Vale</string>
+    
 </resources>

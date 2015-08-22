@@ -128,9 +128,14 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 					Intent sendIntent = getIntent(contentUri);
 					startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_gif)));
 					
-				} else if ( which == 1 ) {					
-					
-					String url = Utils.getURL(getBaseContext(), file.getName());				
+				} else if ( which == 1 ) {
+
+					String url = Utils.getURL(getBaseContext(), file.getName());
+
+					if ( url.equals(Constants.NO) ) {
+						showInfoDialog();
+						return;
+					}
 					Intent inviteFriend = Utils.shareText(getBaseContext(), url); 				
 					startActivity(Intent.createChooser(inviteFriend, getResources().getText(R.string.share_url).toString()));					
 				}
@@ -138,7 +143,25 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 		});
 		builder.show();
 	}
-	
+
+	private void showInfoDialog() {
+
+		AlertDialog alertDialog = new AlertDialog.Builder(DisplayActivity.this).create();
+				
+		alertDialog.setTitle(getResources().getText(R.string.info).toString());
+		alertDialog.setMessage(getResources().getText(R.string.gallery_url).toString());
+		
+		alertDialog.setTitle("Info");		
+		alertDialog.setMessage("This image was not downloaded from the internet. Try sharing the image directly.");
+		alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getText(R.string.ok).toString(),
+		    new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) {
+		            dialog.dismiss();
+		        }
+		    });
+		alertDialog.show();
+	}
+
 	private Uri getUri() {
 		Uri contentUri = FileProvider.getUriForFile(this, Constants.PACKAGE_FILE_PROVIDER, file);		
 		return contentUri;

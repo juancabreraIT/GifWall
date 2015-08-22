@@ -277,7 +277,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnIte
 	         String imagePath = saveFromGalleryToApp(picturePath);
 	         
 	         if ( !imagePath.equals(Constants.ERROR) ) {
-	        	 Utils.setURL(getBaseContext(), imagePath.substring(imagePath.lastIndexOf("/") + 1), Constants.GALLERY);
+	        	 Utils.setURL(getBaseContext(), imagePath.substring(imagePath.lastIndexOf("/") + 1), Constants.NO);
 		         loadGallery();
 			     adaptador.changeData(imagesArray);
 	         } else {

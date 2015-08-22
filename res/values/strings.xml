@@ -22,5 +22,8 @@
     <string name="cancel">Cancel</string>
     <string name="error_gallery">An error occurred while loading from gallery</string>
     <string name="no_image">The url provided doesnt point to an image file</string>
+    <string name="info">Info</string>
+    <string name="gallery_url">This image was not downloaded from the internet. Try sharing the image directly.</string>
+    <string name="ok">Ok</string>
 
 </resources>
