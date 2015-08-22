@@ -9,7 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
@@ -84,20 +84,18 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 	private void setImage(File file) {
 
 		if ( file.getName().contains("." + Constants.GIF) ) {
-			
+
 			Display display = getWindowManager().getDefaultDisplay();
-			int width = (int) (display.getWidth() * 0.9);
-			int heigth = (int) (display.getHeight() * 0.75);
-			int scale;
-			
-			scale = (width < heigth ? width : heigth);			
-			
+			Point size = new Point();
+			display.getSize(size);
+
+			String scale = (size.x < size.y ? "width: 95%; height: auto" : "height: 70%; width: auto");			
 			String data = "<html>"
-						+	 "<body style=\"background:#000000\">"
-						+ 		"<img width=\"" + scale + "\" src=\""+ "file:///" + file.getAbsolutePath() + "\" style=\"position: absolute; margin: auto; top: 0; left: 0; bottom: 0; right: 0;\"	/>"
+						+	 "<body style=\"background:#0F0F0F\">"
+						+ 		"<img src=\""+ "file:///" + file.getAbsolutePath() + "\" style=\"position: absolute; margin: auto; top: 0; left: 0; bottom: 0; right: 0; display: block;" + scale + "\" />"
 						+	 "</body>"
 						+ "</html>";
-			
+
 			webView.loadDataWithBaseURL("file:///" + file.getAbsolutePath(), data, "text/html","UTF-8" , null);
 
 		} else {
@@ -106,8 +104,7 @@ public class DisplayActivity extends Activity implements AdListener, EulaListene
 			
 			Picasso.with(this)
 		    .load(file)
-		    .placeholder(R.drawable.ic_loading)	    
-		    .fit().centerCrop()
+		    .placeholder(R.drawable.ic_loading)
 		    .into(imageView);
 		}
 	}
