@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GifWall</string>
+    <string name="add">Add</string>
+    <string name="invite">Invite your friends</string>
+    <string name="share">Share</string>
+
+    <string name="empty_gallery">There is nothing in the gallery!</string>
+    <string name="invite_msg">Hey! Give it a try to this app\nGifWallet let you save and share gif images!\nhttps://play.google.com/store/apps/details?id=com.haya.gifwall</string>
+    <string name="share_gif">Share gif</string>
+    <string name="share_url">Share URL</string>
+    <string name="wall">wall</string>
+    <string name="addImage">Add new image</string>
+    <string name="fromURL">From URL</string>
+    <string name="fromGallery">From gallery</string>
+    <string name="delete">Delete this image?</string>
+    <string name="image">Image</string>
+    <string name="url">URL</string>
+    <string name="type_url">Type the url</string>
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
+    <string name="error_gallery">An error occurred while loading from gallery</string>
+    <string name="no_image">The url provided doesnt point to an image file</string>
+    <string name="info">Info</string>
+    <string name="gallery_url">This image was not downloaded from the internet. Try sharing the image directly.</string>
+    <string name="ok">Ok</string>
+
+</resources>

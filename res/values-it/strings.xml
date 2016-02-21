@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GifWall</string>
+    <string name="add">Aggiungere</string>
+    <string name="invite">Invita amici</string>
+    <string name="share">Condivide</string>
+
+    <string name="empty_gallery">¡Non ce nulla nella galleria!</string>
+    <string name="invite_msg">Hey! Fai un tentativo questa app\nGifWall salva e condivide gifs!\nhttps://play.google.com/store/apps/details?id=com.haya.gifwall</string>
+    <string name="share_gif">Condivide gif</string>
+    <string name="share_url">Condivide URL</string>
+    <string name="wall">wall</string>
+    <string name="addImage">Aggiungere nuova immagine</string>
+    <string name="fromURL">Da URL</string>
+    <string name="fromGallery">Da galleria</string>
+    <string name="delete">¿Vuoi cancellare questa immagine?</string>
+    <string name="image">Immagine</string>
+    <string name="url">URL</string>
+    <string name="type_url">Scrivere la url</string>
+    <string name="accept">Accettare</string>
+    <string name="cancel">Cancella</string>
+    <string name="error_gallery">Errore nel caricamento.</string>
+    <string name="no_image">Questa url non si corrisponde con una immagine.</string>
+	<string name="info">Info</string>
+    <string name="gallery_url">Questa immagine non viene scaricato da Internet. Provate a condividere il file direttamente.</string>
+    <string name="ok">Va bene</string>
+    
+</resources>
